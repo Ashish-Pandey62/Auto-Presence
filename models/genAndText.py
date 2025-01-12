@@ -1262,3 +1262,164 @@ img,prod_prompt = product_photo('cold drink','refreshing', prod_size=.55, table 
 fes, fes_prompt = festive_photo('Holi')
 
 i = add_smart_text(img,image_prompt = prod_prompt,gradient_end_color=(0,0,255),primary_color = (127,139,152), text_color= (0,0,0))
+
+
+
+# for chatbot:
+
+import json
+from datetime import datetime
+from typing import Dict, List, Optional
+from dataclasses import dataclass
+import logging
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_groq import ChatGroq
+from langchain_core.messages import HumanMessage, AIMessage
+from langchain_core.runnables import RunnableWithMessageHistory
+from langchain_core.chat_history import BaseChatMessageHistory
+
+@dataclass
+class Message:
+    sender_id: str
+    content: str
+    timestamp: datetime
+    platform: str
+
+class ChatHistory(BaseChatMessageHistory):
+    def __init__(self):
+        self.messages: List[HumanMessage | AIMessage] = []
+
+    def add_message(self, message: HumanMessage | AIMessage) -> None:
+        self.messages.append(message)
+
+    def clear(self) -> None:
+        self.messages = []
+
+class ConversationHistory:
+    def __init__(self):
+        self.conversations: Dict[str, List[Message]] = {}
+        self.chat_histories: Dict[str, ChatHistory] = {}
+
+    def add_message(self, user_id: str, message: Message):
+        if user_id not in self.conversations:
+            self.conversations[user_id] = []
+        self.conversations[user_id].append(message)
+
+        # Update chat history for LangChain
+        if user_id not in self.chat_histories:
+            self.chat_histories[user_id] = ChatHistory()
+
+        if message.sender_id == "bot":
+            self.chat_histories[user_id].add_message(AIMessage(content=message.content))
+        else:
+            self.chat_histories[user_id].add_message(HumanMessage(content=message.content))
+
+    def get_chat_history(self, user_id: str) -> ChatHistory:
+        if user_id not in self.chat_histories:
+            self.chat_histories[user_id] = ChatHistory()
+        return self.chat_histories[user_id]
+
+    def get_conversation(self, user_id: str, limit: int = 5) -> List[Message]:
+        if user_id not in self.conversations:
+            return []
+        return self.conversations[user_id][-limit:]
+
+    def save_to_file(self, filename: str):
+        serialized = {
+            user_id: [
+                {
+                    "sender_id": msg.sender_id,
+                    "content": msg.content,
+                    "timestamp": msg.timestamp.isoformat(),
+                    "platform": msg.platform
+                }
+                for msg in messages
+            ]
+            for user_id, messages in self.conversations.items()
+        }
+        with open(filename, 'w') as f:
+            json.dump(serialized, f)
+
+    def load_from_file(self, filename: str):
+        try:
+            with open(filename, 'r') as f:
+                data = json.load(f)
+                for user_id, messages in data.items():
+                    self.conversations[user_id] = []
+                    self.chat_histories[user_id] = ChatHistory()
+
+                    for msg in messages:
+                        message = Message(
+                            sender_id=msg["sender_id"],
+                            content=msg["content"],
+                            timestamp=datetime.fromisoformat(msg["timestamp"]),
+                            platform=msg["platform"]
+                        )
+                        self.add_message(user_id, message)
+        except FileNotFoundError:
+            logging.warning(f"No conversation history file found at {filename}")
+
+class LangchainChatbot:
+    def __init__(self, groq_api_key: str, model_name: str = "mixtral-8x7b-32768"):
+        self.history = ConversationHistory()
+
+        # Initialize Groq LLM
+        self.llm = ChatGroq(
+            groq_api_key=groq_api_key,
+            model_name=model_name
+        )
+
+        # Define the conversation template
+        self.prompt = ChatPromptTemplate.from_messages([
+            ("system", "You are a helpful customer service chatbot. Provide clear, concise, and relevant responses."),
+            MessagesPlaceholder(variable_name="history"),
+            ("human", "{message}")
+        ])
+
+        # Create the chain
+        self.chain = self.prompt | self.llm
+
+        # Add message history
+        self.chain_with_history = RunnableWithMessageHistory(
+            self.chain,
+            lambda session_id: self.history.get_chat_history(session_id),
+            input_messages_key="message",
+            history_messages_key="history"
+        )
+
+    def generate_response(self, user_id: str, current_message: str, platform: str) -> str:
+        """Generate contextual response using conversation history"""
+        response = self.chain_with_history.invoke(
+            {"message": current_message},
+            config={"configurable": {"session_id": user_id}}
+        )
+
+        return response.content
+
+    def handle_message(self, user_id: str, message_content: str, platform: str) -> str:
+        """Process incoming message and generate response"""
+        # Store incoming message
+        incoming_message = Message(
+            sender_id=user_id,
+            content=message_content,
+            timestamp=datetime.now(),
+            platform=platform
+        )
+        self.history.add_message(user_id, incoming_message)
+
+        # Generate response
+        response_content = self.generate_response(user_id, message_content, platform)
+
+        # Store bot's response
+        bot_message = Message(
+            sender_id="bot",
+            content=response_content,
+            timestamp=datetime.now(),
+            platform=platform
+        )
+        self.history.add_message(user_id, bot_message)
+
+        # Save updated conversation history
+        self.history.save_to_file("conversation_history.json")
+
+        return response_content
