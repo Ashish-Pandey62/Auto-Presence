@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { Button } from "../ui/button";
 import { CardContent } from "../ui/card";
 import {
@@ -12,7 +12,6 @@ import {
 import { Input } from "../ui/input";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { format } from "date-fns";
 import { API_URL } from "@/constants/constants";
 import {
   Select,
@@ -29,6 +28,7 @@ const formSchema = z.object({
   product: z.string().min(1, "Please enter your product name."),
   postType: z.enum(["image_only", "image_and_text"]),
   text: z.string().optional(),
+  text_layering: z.enum(["forward", "backward"]),
 });
 
 export const CreateInstantAIPostForm = () => {
@@ -40,7 +40,14 @@ export const CreateInstantAIPostForm = () => {
       product: "",
       postType: "image_only",
       text: "",
+      text_layering: "forward",
     },
+  });
+
+  const postType = useWatch({
+    control: form.control,
+    name: "postType",
+    defaultValue: "image_only",
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -55,7 +62,9 @@ export const CreateInstantAIPostForm = () => {
       formData.append("brand", "1");
       formData.append("product", "1");
 
-      const response = await fetch(`${API_URL}/api/instagram/ai/post/`, {
+      let response;
+
+      response = await fetch(`${API_URL}/api/instagram/ai/post/`, {
         method: "POST",
         body: formData,
       });
@@ -140,27 +149,57 @@ export const CreateInstantAIPostForm = () => {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="text"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Overlay Text (optional)</FormLabel>
-                <FormControl>
-                  <Input
-                    type="text"
-                    placeholder="Enter text to overlay on image"
-                    className="w-full"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {postType === "image_and_text" && (
+            <>
+              <FormField
+                control={form.control}
+                name="text"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Overlay Text (optional)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="text"
+                        placeholder="Enter text to overlay on image"
+                        className="w-full"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="text_layering"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Text Layering</FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value || "Forward"}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select text layering" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectItem value="forward">Forward</SelectItem>
+                            <SelectItem value="backward">Backward</SelectItem>
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </>
+          )}
           <Button
             type="submit"
-            className="w-full bg-[#9333EA] hover:bg-[#7E22CE]"
+            className="w-full"
             disabled={form.formState.isSubmitting}
           >
             {form.formState.isSubmitting ? "Submitting..." : "Submit Post"}

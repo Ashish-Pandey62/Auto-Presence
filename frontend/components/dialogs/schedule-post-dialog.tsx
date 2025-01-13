@@ -126,7 +126,7 @@ export default function SchedulePostDialog({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button className="bg-[#9333EA] hover:bg-[#7E22CE]">
+        <Button>
           <span className="mr-2">+</span> Schedule Post
         </Button>
       </DialogTrigger>

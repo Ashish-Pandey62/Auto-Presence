@@ -4,7 +4,6 @@ import "./globals.css";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { ThemeProvider } from "@/components/theme-provider";
-import { inter, playfair } from "./fonts";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -28,8 +27,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="${inter.variable} ${playfair.variable}">
-      <body className={`${inter.className} antialiased bg-gray-50`}>
+    <html lang="en">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -38,7 +39,9 @@ export default function RootLayout({
         >
           <SidebarProvider>
             <AppSidebar />
-            <main className="w-[calc(100%-20rem)] mx-auto">{children}</main>
+            <main className="w-[calc(100%-16rem)] mx-auto bg-secondary">
+              {children}
+            </main>
           </SidebarProvider>
         </ThemeProvider>
       </body>

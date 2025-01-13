@@ -86,7 +86,7 @@ export default function DashboardPage() {
           <CardContent>
             <div className="space-y-4">
               {POSTS.map((post) => (
-                <div className="flex items-center space-x-4">
+                <div key={post.id} className="flex items-center space-x-4">
                   {/* <div className="w-[100px] h-[100px] bg-gray-200 rounded" /> */}
                   <Avatar className="w-14 h-14 rounded-full">
                     <AvatarImage

@@ -34,7 +34,7 @@ export default function InstantPostPage() {
                     id="ai-mode"
                     checked={isAIMode}
                     onCheckedChange={setIsAIMode}
-                    className="data-[state=checked]:bg-purple-500"
+                    className="data-[state=checked]:bg-primary"
                   />
                 </div>
               </div>

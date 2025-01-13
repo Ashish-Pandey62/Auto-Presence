@@ -192,10 +192,7 @@ export default function ProductForm() {
                   )}
                 />
 
-                <Button
-                  type="submit"
-                  className="w-full bg-purple-600 hover:bg-purple-700"
-                >
+                <Button type="submit" className="w-full">
                   Submit Product
                 </Button>
               </form>

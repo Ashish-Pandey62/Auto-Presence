@@ -9,7 +9,7 @@ interface IMessageCardProps {
 
 export const MessageCard = () => {
   return (
-    <div className="flex items-center p-4 hover:bg-neutral-100 rounded-lg border border-neutral-200/30 cursor-pointer">
+    <div className="flex items-center p-4 hover:bg-neutral-100 rounded-lg border border-neutral-200/30 cursor-pointer bg-white">
       <Avatar>
         <AvatarImage src="https://github.com/shadcn.png" />
         <AvatarFallback>CN</AvatarFallback>

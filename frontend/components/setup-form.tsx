@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -45,8 +46,10 @@ const formSchema = z.object({
   brand_tone: z.enum(["professional", "casual", "friendly", "formal"]),
 });
 
-export const SetupFrom = () => {
+export const SetupForm = () => {
   const router = useRouter();
+  const [previewLogo, setPreviewLogo] = useState<string | null>(null); // State for logo preview
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -56,6 +59,12 @@ export const SetupFrom = () => {
       brand_tone: undefined,
     },
   });
+
+  const handleLogoPreview = (files: FileList | null) => {
+    if (files && files[0]) {
+      setPreviewLogo(URL.createObjectURL(files[0])); // Generate preview URL
+    }
+  };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
@@ -82,6 +91,7 @@ export const SetupFrom = () => {
       const data = await response.json();
       console.log("API response:", data);
       form.reset();
+      setPreviewLogo(null); // Clear the preview on form reset
       router.push("/product");
     } catch (error) {
       console.error("Form submission error:", error);
@@ -90,7 +100,7 @@ export const SetupFrom = () => {
 
   return (
     <div className="container mx-auto px-4 max-w-2xl py-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-4">
+      <h1 className="text-2xl font-bold text-secondary-foreground mb-4 dark:text-white">
         Tell us about your brand
       </h1>
 
@@ -124,28 +134,53 @@ export const SetupFrom = () => {
                   <FormItem>
                     <FormLabel>Brand Logo</FormLabel>
                     <FormControl>
-                      <div className="mt-1 border-2 border-dashed border-gray-300 rounded-lg p-8 hover:border-purple-500 transition-colors">
+                      <div className="mt-1 border-2 border-dashed border-gray-300 rounded-lg p-8 hover:border-primary transition-colors">
                         <div className="flex flex-col items-center">
-                          <Upload className="w-8 h-8 text-purple-400 mb-2" />
-                          <input
-                            type="file"
-                            accept="image/png, image/jpg, image/jpeg, image/gif"
-                            onChange={(e) => field.onChange(e.target.files)}
-                            className="hidden"
-                            id="brand-logo"
-                          />
-                          <label
-                            htmlFor="brand-logo"
-                            className="cursor-pointer text-center"
-                          >
-                            <p className="text-gray-500">Upload a file</p>
-                            <p className="text-gray-500 text-sm">
-                              or drag and drop
-                            </p>
-                            <p className="text-gray-400 text-sm">
-                              PNG, JPG, GIF up to 10MB
-                            </p>
-                          </label>
+                          {previewLogo ? (
+                            <div className="relative">
+                              <img
+                                src={previewLogo}
+                                alt="Brand Logo Preview"
+                                className="w-40 h-40 object-cover rounded-lg"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setPreviewLogo(null); // Clear the preview
+                                  field.onChange(null); // Clear the field value
+                                }}
+                                className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                              >
+                                ✕
+                              </button>
+                            </div>
+                          ) : (
+                            <>
+                              <Upload className="w-8 h-8 text-primary mb-2" />
+                              <input
+                                type="file"
+                                accept="image/png, image/jpg, image/jpeg, image/gif"
+                                onChange={(e) => {
+                                  field.onChange(e.target.files);
+                                  handleLogoPreview(e.target.files); // Generate preview on file change
+                                }}
+                                className="hidden"
+                                id="brand-logo"
+                              />
+                              <label
+                                htmlFor="brand-logo"
+                                className="cursor-pointer text-center"
+                              >
+                                <p className="text-gray-500">Upload a file</p>
+                                <p className="text-gray-500 text-sm">
+                                  or drag and drop
+                                </p>
+                                <p className="text-gray-400 text-sm">
+                                  PNG, JPG, GIF up to 10MB
+                                </p>
+                              </label>
+                            </>
+                          )}
                         </div>
                       </div>
                     </FormControl>
@@ -198,11 +233,8 @@ export const SetupFrom = () => {
                 )}
               />
 
-              <Button
-                type="submit"
-                className="w-full bg-purple-600 hover:bg-purple-700"
-              >
-                Next Step
+              <Button type="submit" className="w-full">
+                Submit Brand
               </Button>
             </form>
           </Form>

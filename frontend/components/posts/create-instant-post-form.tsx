@@ -9,6 +9,8 @@ import { Upload } from "lucide-react";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { API_URL } from "@/constants/constants";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   caption: z.string().nonempty("Please enter a caption."),
@@ -35,6 +37,9 @@ const formSchema = z.object({
 });
 
 export const CreateInstantPostForm = () => {
+  const router = useRouter();
+  const [preveiwImage, setPreviewImage] = useState<string | null>(null);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -42,6 +47,12 @@ export const CreateInstantPostForm = () => {
       images: undefined,
     },
   });
+
+  const handlePreviewImage = (files: FileList | null) => {
+    if (files && files[0]) {
+      setPreviewImage(URL.createObjectURL(files[0]));
+    }
+  };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
@@ -63,7 +74,9 @@ export const CreateInstantPostForm = () => {
 
       if (response.ok) {
         form.reset();
+        setPreviewImage(null);
         console.log("Post created successfully!");
+        router.push("/analytics");
       } else {
         throw new Error("Failed to create post.");
       }
@@ -97,29 +110,54 @@ export const CreateInstantPostForm = () => {
                 <FormItem>
                   <FormLabel>Upload Images</FormLabel>
                   <FormControl>
-                    <div className="mt-1 border-2 border-dashed border-gray-300 rounded-lg p-8 hover:border-purple-500 transition-colors">
+                    <div className="mt-1 border-2 border-dashed border-gray-300 rounded-lg p-8 hover:border-primary transition-colors">
                       <div className="flex flex-col items-center">
-                        <Upload className="w-8 h-8 text-purple-400 mb-2" />
-                        <input
-                          type="file"
-                          accept="image/png, image/jpg, image/jpeg, image/gif"
-                          onChange={(e) => field.onChange(e.target.files)}
-                          multiple
-                          className="hidden"
-                          id="images-upload"
-                        />
-                        <label
-                          htmlFor="images-upload"
-                          className="cursor-pointer text-center"
-                        >
-                          <p className="text-gray-500">Upload files</p>
-                          <p className="text-gray-500 text-sm">
-                            or drag and drop
-                          </p>
-                          <p className="text-gray-400 text-sm">
-                            PNG, JPG, GIF up to 10MB each
-                          </p>
-                        </label>
+                        {preveiwImage ? (
+                          <div className="relative">
+                            <img
+                              src={preveiwImage}
+                              alt="preview image"
+                              className="w-40 h-40 object-cover rounded-lg"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setPreviewImage(null); // Clear the preview
+                                field.onChange(null); // Clear the field value
+                              }}
+                              className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        ) : (
+                          <>
+                            <Upload className="w-8 h-8 text-primary mb-2" />
+                            <input
+                              type="file"
+                              accept="image/png, image/jpg, image/jpeg, image/gif"
+                              onChange={(e) => {
+                                field.onChange(e.target.files);
+                                handlePreviewImage(e.target.files);
+                              }}
+                              multiple
+                              className="hidden"
+                              id="images-upload"
+                            />
+                            <label
+                              htmlFor="images-upload"
+                              className="cursor-pointer text-center"
+                            >
+                              <p className="text-gray-500">Upload files</p>
+                              <p className="text-gray-500 text-sm">
+                                or drag and drop
+                              </p>
+                              <p className="text-gray-400 text-sm">
+                                PNG, JPG, GIF up to 10MB each
+                              </p>
+                            </label>
+                          </>
+                        )}
                       </div>
                     </div>
                   </FormControl>
@@ -129,7 +167,7 @@ export const CreateInstantPostForm = () => {
 
             <Button
               type="submit"
-              className="w-full bg-purple-600 hover:bg-purple-700"
+              className="w-full"
               disabled={form.formState.isSubmitting}
             >
               {form.formState.isSubmitting ? "Submitting..." : "Submit Post"}

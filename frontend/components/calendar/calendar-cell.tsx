@@ -39,14 +39,12 @@ export function CalendarCell({
     <button
       onClick={onClick}
       className={cn(
-        "min-h-[120px] w-full p-2 text-left hover:bg-accent/50 relative group",
+        "min-h-[120px] w-full p-2 text-left hover:bg-secondary relative group",
         isSelected && "ring-2 ring-primary",
-        isToday && "bg-accent/20"
+        isToday && "bg-secondary text-secondary-foreground"
       )}
     >
-      <span className={cn("text-sm font-medium", isToday && "text-primary")}>
-        {date}
-      </span>
+      <span className={cn("text-sm font-medium")}>{date}</span>
 
       <div className="mt-1 space-y-1">
         {posts.slice(0, 3).map((post) => (
@@ -56,7 +54,7 @@ export function CalendarCell({
                 <div
                   className={cn(
                     "text-xs rounded-md p-1.5 border truncate",
-                    "bg-purple-100 text-purple-700 border-purple-200"
+                    "bg-primary text-primary-foreground border-purple-200"
                   )}
                   onClick={() => {
                     router.push(`/post/scheduled/${post.id}`);
@@ -68,7 +66,7 @@ export function CalendarCell({
               <TooltipContent>
                 <div className="text-sm">
                   <p className="font-medium">{post.name}</p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs text-primary-foreground">
                     {new Date(post.scheduledFor).toLocaleTimeString([], {
                       hour: "2-digit",
                       minute: "2-digit",

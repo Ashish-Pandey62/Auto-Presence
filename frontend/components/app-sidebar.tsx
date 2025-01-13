@@ -12,10 +12,10 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import {
-  CalendarSync,
-  ChartNoAxesCombined,
+  CalendarIcon as CalendarSync,
+  BarChartIcon as ChartNoAxesCombined,
   ChevronUp,
-  House,
+  HomeIcon as House,
   MessageSquareMore,
   Moon,
   PenLine,
@@ -32,6 +32,7 @@ import {
 import { usePathname } from "next/navigation";
 import { DropdownMenuSeparator } from "@radix-ui/react-dropdown-menu";
 import { useTheme } from "next-themes";
+import { cn } from "@/lib/utils";
 
 const items = [
   {
@@ -71,9 +72,9 @@ export const AppSidebar = () => {
   const { theme, setTheme } = useTheme();
 
   return (
-    <Sidebar className="border-r">
-      <SidebarHeader className="border-b px-4 py-6">
-        <h1 className="text-purple-600 font-bold text-2xl">
+    <Sidebar className="border-r bg-secondary border-slate-300">
+      <SidebarHeader className="border-b px-4 py-6 border-slate-300">
+        <h1 className="text-secondary-foreground font-bold text-2xl dark:text-white">
           <a href="/">SocioConnect</a>
         </h1>
       </SidebarHeader>
@@ -81,25 +82,31 @@ export const AppSidebar = () => {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={pathname === item.url}
-                    className="gap-3 px-4 py-2"
-                  >
-                    <a href={item.url}>
-                      <item.icon className="h-5 w-5" />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {items.map((item) => {
+                const isActive = pathname === item.url;
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      className={cn(
+                        "w-full gap-3 px-4 py-2 transition-colors",
+                        "group hover:bg-slate-200 dark:hover:bg-slate-700",
+                        isActive && "bg-slate-200 dark:bg-slate-700"
+                      )}
+                    >
+                      <a href={item.url}>
+                        <item.icon className="h-5 w-5" />
+                        <span>{item.title}</span>
+                      </a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="border-t p-4">
+      <SidebarFooter className="border-t p-4 border-slate-300">
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
