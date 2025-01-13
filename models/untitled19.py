@@ -30,7 +30,6 @@ import json
 import base64
 from PIL import Image
 import io
-from IPython.display import display
 
 def generate_freepik_image(prompt):
     # payload = {
@@ -172,7 +171,8 @@ def overlay_table(image1_path, image2_path, output_path, offset_ratio=0.0):
 
     except Exception as e:
         print(f"Error processing images: {str(e)}")
-        return False
+        raise e
+    
 
 def overlay_product(image1_path, image2_path, output_path, upward_offset_ratio=0.0, scale_factor=0.45):
     """
@@ -347,105 +347,105 @@ def choose_table(product, background_prompt):
     Makes call to choose table image as per product
   """
   dic = {
-    "C:\\Users\\mishr\\moyeMoye\\models\\models_assets\\tables\\image copy 2.png": {
+    r"C:\Users\ankit\Desktop\socio\autopresence\Auto-Presence\models\models_assets\tables\image copy 3.png": {
         "Type": "Wooden",
         "Color": "Brown",
         "Appearance": "Polished",
         "Vibe": "Rustic",
         "Texture": "Grained"
     },
-    "C:\\Users\\mishr\\moyeMoye\\models\\models_assets\\tables\\image copy 3.png": {
+    r"C:\Users\ankit\Desktop\socio\autopresence\Auto-Presence\models\models_assets\tables\image copy 3.png": {
         "Type": "Modern",
         "Color": "Light",
         "Appearance": "Matte",
         "Vibe": "Minimalist",
         "Texture": "Smooth"
     },
-    "C:\\Users\\mishr\\moyeMoye\\models\\models_assets\\tables\\image copy 4.png": {
+    r"C:\Users\ankit\Desktop\socio\autopresence\Auto-Presence\models\models_assets\tables\image copy 4.png": {
         "Type": "Contemporary",
         "Color": "white",
         "Appearance": "Polished",
         "Vibe": "Sleek",
         "Texture": "Smooth"
     },
-    "C:\\Users\\mishr\\moyeMoye\\models\\models_assets\\tables\\image copy 6.png": {
+    r"C:\Users\ankit\Desktop\socio\autopresence\Auto-Presence\models\models_assets\tables\image copy 6.png": {
         "Type": "Office",
         "Color": "Wood",
         "Appearance": "Matte",
         "Vibe": "Professional",
         "Texture": "Smooth"
     },
-    "C:\\Users\\mishr\\moyeMoye\\models\\models_assets\\tables\\image copy 7.png": {
+    r"C:\Users\ankit\Desktop\socio\autopresence\Auto-Presence\models\models_assets\tables\image copy 7.png": {
         "Type": "Dining",
         "Color": "Light-Wood",
         "Appearance": "Natural",
         "Vibe": "Casual",
         "Texture": "Grained"
     },
-    "C:\\Users\\mishr\\moyeMoye\\models\\models_assets\\tables\\image copy 8.png": {
+    r"C:\Users\ankit\Desktop\socio\autopresence\Auto-Presence\models\models_assets\tables\image copy 8.png": {
         "Type": "Rustic",
         "Color": "Dark-Wood",
         "Appearance": "Glossy",
         "Vibe": "Elegant",
         "Texture": "Richly-Grained"
     },
-    "C:\\Users\\mishr\\moyeMoye\\models\\models_assets\\tables\\image copy 9.png": {
+    r"C:\Users\ankit\Desktop\socio\autopresence\Auto-Presence\models\models_assets\tables\image copy 9.png": {
         "Type": "Modern",
         "Color": "White-Marble",
         "Appearance": "Glossy",
         "Vibe": "Luxurious",
         "Texture": "Smooth"
     },
-    "C:\\Users\\mishr\\moyeMoye\\models\\models_assets\\tables\\image copy 10.png": {
+    r"C:\Users\ankit\Desktop\socio\autopresence\Auto-Presence\models\models_assets\tables\image copy 10.png": {
         "Type": "Industrial",
         "Color": "Concrete",
         "Appearance": "Matte",
         "Vibe": "Minimalist",
         "Texture": "Textured"
     },
-    "C:\\Users\\mishr\\moyeMoye\\models\\models_assets\\tables\\image copy 11.png": {
+    r"C:\Users\ankit\Desktop\socio\autopresence\Auto-Presence\models\models_assets\tables\image copy 11.png": {
         "Type": "Elegant",
         "Color": "White-Marble",
         "Appearance": "Polished",
         "Vibe": "Sophisticated",
         "Texture": "Veined"
     },
-    "C:\\Users\\mishr\\moyeMoye\\models\\models_assets\\tables\\image copy 12.png": {
+    r"C:\Users\ankit\Desktop\socio\autopresence\Auto-Presence\models\models_assets\tables\image copy 12.png": {
         "Type": "Modern",
         "Color": "Black",
         "Appearance": "Glossy",
         "Vibe": "Sleek",
         "Texture": "Smooth"
     },
-    "C:\\Users\\mishr\\moyeMoye\\models\\models_assets\\tables\\image copy 13.png": {
+    r"C:\Users\ankit\Desktop\socio\autopresence\Auto-Presence\models\models_assets\tables\image copy 13.png": {
         "Type": "Outdoor",
         "Color": "Honey-Wood",
         "Appearance": "Natural",
         "Vibe": "Rustic",
         "Texture": "Textured"
     },
-    "C:\\Users\\mishr\\moyeMoye\\models\\models_assets\\tables\\image copy.png": {
+    r"C:\Users\ankit\Desktop\socio\autopresence\Auto-Presence\models\models_assets\tables\image copy.png": {
         "Type": "Contemporary",
         "Color": "Natural-Wood",
         "Appearance": "Satin",
         "Vibe": "Modern",
         "Texture": "Smooth-Grained"
     },
-    "C:\\Users\\mishr\\moyeMoye\\models\\models_assets\\tables\\image.png": {
+    r"C:\Users\ankit\Desktop\socio\autopresence\Auto-Presence\models\models_assets\tables\image.png": {
         "Type": "Craft",
         "Color": "Light-Wood",
         "Appearance": "Matte",
         "Vibe": "Artistic",
         "Texture": "Fine-Grained"
     },
-    "C:\\Users\\mishr\\moyeMoye\\models\\models_assets\\tables\\table1_trans.png": {
+    r"C:\Users\ankit\Desktop\socio\autopresence\Auto-Presence\models\models_assets\tables\table1_trans.png": {
         "Type": "Rustic",
         "Color": "Weathered-Wood",
         "Appearance": "Distressed",
         "Vibe": "Vintage",
         "Texture": "Rough-Grained"
     },
-    "C:\\Users\\mishr\\moyeMoye\\models\\models_assets\\tables\\table2_trans.png": {
+    r"C:\Users\ankit\Desktop\socio\autopresence\Auto-Presence\models\models_assets\tables\table2_trans.png": {
         "Type": "Picnic",
         "Color": "Pine-Wood",
         "Appearance": "Polished",
@@ -635,7 +635,7 @@ def product_photo(product,vibe, offset = .05,prod_size=.55, table = True,  prod_
       # Generate a unique filename
       import uuid
       unique_filename = str(uuid.uuid4()) + ".png"  # Use UUID for uniqueness
-      filepath = os.path.join(r"C:\Users\mishr\moyeMoye\models\models_assets", unique_filename)
+      filepath = os.path.join(r"C:\Users\ankit\Desktop\socio\autopresence\Auto-Presence\models\models_assets", unique_filename)
 
       # Save the image with the unique filename
       image.save(filepath)
@@ -645,7 +645,7 @@ def product_photo(product,vibe, offset = .05,prod_size=.55, table = True,  prod_
   if (table):
     while True:
       try:
-        table_img =overlay_table(unique_filename, choose_table(product, prompt), filepath,.05)
+        image =overlay_table(filepath, choose_table(product, prompt), filepath,.05)
         print("Table overlay successful")
         break
       except:
@@ -1146,10 +1146,10 @@ def get_font_location(font_name=None):
     if font_name:
         for font in font_files:
             if font_name.lower() in font.lower():  # Case-insensitive search
-                return os.path.join(r'C:\Users\mishr\moyeMoye\models\models_assets\Fonts' ,font)
+                return os.path.join(r'C:\Users\ankit\Desktop\socio\autopresence\Auto-Presence\models\models_assets\Fonts' ,font)
         return f"Font '{font_name}' not found."
     else:
-        return os.path.join(r'C:\Users\mishr\moyeMoye\models\models_assets\Fonts', random.choice(font_files))
+        return os.path.join(r'C:\Users\ankit\Desktop\socio\autopresence\Auto-Presence\models\models_assets\Fonts', random.choice(font_files))
 
 
 def get_nepali_font_path():
@@ -1167,7 +1167,7 @@ def get_nepali_font_path():
     random_font = random.choice(fonts)
 
     # Return the full path
-    return os.path.join(r'C:\Users\mishr\moyeMoye\models\models_assets\Fonts',random_font)
+    return os.path.join(r'C:\Users\ankit\Desktop\socio\autopresence\Auto-Presence\models\models_assets\Fonts',random_font)
 
 from typing import Optional, Tuple, Literal
 from PIL import Image
@@ -1262,7 +1262,7 @@ def add_smart_text(
       """
 
       while True:
-        a = llm(im,color_generation_prompt)
+        a = llm(image_path,color_generation_prompt)
         print('color deciding', a)
         try:
             # Attempt to load as JSON
@@ -1322,9 +1322,9 @@ def add_smart_text(
         )
 
 
-# img,p = product_photo('Drink', 'refreshing', offset = .05,prod_size=.55, table = True,  prod_img = 'C:\\Users\\mishr\\moyeMoye\\models\\models_assets\\file.png')
-# txt_added = add_smart_text(img, image_prompt=p, text_color=(255, 255, 255), primary_color=(0, 0, 0))
-# if txt_added.mode != 'RGB':
-#   txt_added = txt_added.convert('RGB')
-# txt_added.show()
-# txt_added.save('C:\\Users\\mishr\\moyeMoye\\models\\models_assets\\generated_output\\output.jpg', 'JPEG')
+img,p = product_photo('Drink', 'refreshing', offset = .05,prod_size=.95, table = True,  prod_img = r'C:\Users\ankit\Desktop\socio\autopresence\Auto-Presence\models\models_assets\file.png')
+txt_added = add_smart_text(img, image_prompt=p)
+if txt_added.mode != 'RGB':
+  txt_added = txt_added.convert('RGB')
+txt_added.show()
+txt_added.save(r'C:\Users\ankit\Desktop\socio\autopresence\Auto-Presence\models\models_assets\output.jpg', 'JPEG')
